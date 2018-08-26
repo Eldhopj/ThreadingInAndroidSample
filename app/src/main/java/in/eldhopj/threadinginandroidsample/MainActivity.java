@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //            public void run() {
 //                // Work in here
 //            }
-//        });
+//        }).start();
     }
 
     public void stopThread(View view) {
