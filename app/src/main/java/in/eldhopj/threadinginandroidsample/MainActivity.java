@@ -17,6 +17,8 @@ import android.widget.Button;
  *          Passing message from background thread into MainThread using post() and runOnUiThread()
  *
  *Commit 4 : Anonymous Runnable inner class and how to stop tread
+ *
+ * Code 5 : Custom made by me
  *          */
 
 public class MainActivity extends AppCompatActivity {
@@ -35,69 +37,94 @@ public class MainActivity extends AppCompatActivity {
 
     public void startThread(View view) {
         stopThread = false;
-        BackgroundThread thread = new BackgroundThread(10);
-       // thread.run(); //Make run in MainThread
-        new Thread(thread).start();
 
         /**Anonymous inner class*/
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                // Work in here
-//            }
-//        }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < 10; i++) {
+                    Log.d(TAG, "startThread: " + i);
+
+                    if (stopThread) {
+                        return;
+                    }
+
+                    if (i == 5) {
+                        /**Put the message into mainThread using runOnUiThread()*/
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                buttonStart.setText("50%");
+                            }
+                        });
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start(); //Starting thread in here
+
+        //        BackgroundThread thread = new BackgroundThread(10);
+//       // thread.run(); //Make run in MainThread
+//        new Thread(thread).start();
     }
 
     public void stopThread(View view) {
         stopThread = true;
     }
 
-    /**Runnable class*/
-    class BackgroundThread implements Runnable{
-        private int seconds;
-        BackgroundThread(int seconds) {
-            this.seconds = seconds;
-        }
 
-        @Override
-        public void run() { // Background task
-            for (int i = 0; i < seconds; i++) {
-                Log.d(TAG, "startThread: " + i);
 
-                if (stopThread){
-                    return;
-                }
 
-                if (i==5){
-                    /**Put the message into mainThread using Handler*/
-//                    mainHandler.post(new Runnable() { // Handler posts it into the UI thread
+//    /**Runnable class*/
+//    class BackgroundThread implements Runnable{
+//        private int seconds;
+//        BackgroundThread(int seconds) {
+//            this.seconds = seconds;
+//        }
+//
+//        @Override
+//        public void run() { // Background task
+//            for (int i = 0; i < seconds; i++) {
+//                Log.d(TAG, "startThread: " + i);
+//
+//                if (stopThread){
+//                    return;
+//                }
+//
+//                if (i==5){
+//                    /**Put the message into mainThread using Handler*/
+////                    mainHandler.post(new Runnable() { // Handler posts it into the UI thread
+////                        @Override
+////                        public void run() {
+////                            buttonStart.setText("50%");
+////                        }
+////                    });
+//                    /**Put the message into mainThread using post()*/
+////                    buttonStart.post(new Runnable() {
+////                        @Override
+////                        public void run() {
+////                            buttonStart.setText("50%");
+////                        }
+////                    });
+//                    /**Put the message into mainThread using runOnUiThread()*/
+//                    runOnUiThread(new Runnable() {
 //                        @Override
 //                        public void run() {
 //                            buttonStart.setText("50%");
 //                        }
 //                    });
-                    /**Put the message into mainThread using post()*/
-//                    buttonStart.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            buttonStart.setText("50%");
-//                        }
-//                    });
-                    /**Put the message into mainThread using runOnUiThread()*/
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            buttonStart.setText("50%");
-                        }
-                    });
-                }
-
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//                }
+//
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 }
