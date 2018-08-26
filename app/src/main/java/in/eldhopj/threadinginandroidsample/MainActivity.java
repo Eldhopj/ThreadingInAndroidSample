@@ -13,6 +13,8 @@ import android.widget.Button;
  *          <href "https://www.youtube.com/watch?v=0Z5MZ0jL2BM/>
  *          Runnable can't update anything from background thread into mainThread only after executing, But Handler can do it
  *
+ *Commit 3 : post() and runOnUiThread()
+ *          Passing message from background thread into MainThread using post() and runOnUiThread()
  *          */
 
 public class MainActivity extends AppCompatActivity {
@@ -48,15 +50,29 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < seconds; i++) {
                 Log.d(TAG, "startThread: " + i);
 
-                /**Put the message into mainThread using Handler*/
+
                 if (i==5){
-                    mainHandler.post(new Runnable() { // Handler posts it into the UI thread
+                    /**Put the message into mainThread using Handler*/
+//                    mainHandler.post(new Runnable() { // Handler posts it into the UI thread
+//                        @Override
+//                        public void run() {
+//                            buttonStart.setText("50%");
+//                        }
+//                    });
+                    /**Put the message into mainThread using post()*/
+//                    buttonStart.post(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            buttonStart.setText("50%");
+//                        }
+//                    });
+                    /**Put the message into mainThread using runOnUiThread()*/
+                    runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             buttonStart.setText("50%");
                         }
                     });
-
                 }
 
                 try {
