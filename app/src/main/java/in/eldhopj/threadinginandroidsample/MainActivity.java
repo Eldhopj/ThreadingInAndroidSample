@@ -15,12 +15,17 @@ import android.widget.Button;
  *
  *Commit 3 : post() and runOnUiThread()
  *          Passing message from background thread into MainThread using post() and runOnUiThread()
+ *
+ *Commit 4 : Anonymous Runnable inner class and how to stop tread
  *          */
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private Handler mainHandler = new Handler(); // Android class to handle background tasks
     private Button buttonStart;
+
+    private volatile boolean stopThread = false; // volatile makes sure all our threads exists always update version of this variable
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,18 +34,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void startThread(View view) {
+        stopThread = false;
         BackgroundThread thread = new BackgroundThread(10);
        // thread.run(); //Make run in MainThread
         new Thread(thread).start();
+
+        /**Anonymous inner class*/
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // Work in here
+//            }
+//        });
     }
 
     public void stopThread(View view) {
+        stopThread = true;
     }
 
     /**Runnable class*/
     class BackgroundThread implements Runnable{
         private int seconds;
-
         BackgroundThread(int seconds) {
             this.seconds = seconds;
         }
@@ -50,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < seconds; i++) {
                 Log.d(TAG, "startThread: " + i);
 
+                if (stopThread){
+                    return;
+                }
 
                 if (i==5){
                     /**Put the message into mainThread using Handler*/
